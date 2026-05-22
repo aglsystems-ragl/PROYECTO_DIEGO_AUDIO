@@ -1,12 +1,8 @@
-# Diego Arenas Audio  
-## Arquitectura Distribuida con Microservicios, Docker Swarm, HAProxy, Apache Spark y JMeter
+# 🎵 Diego Arenas Audio — Plataforma Distribuida de Gestión Musical
 
-Proyecto académico de infraestructura distribuida orientado al diseño, despliegue, balanceo, escalabilidad, procesamiento analítico y pruebas de rendimiento de un sistema web basado en microservicios.
-
-El sistema implementa una plataforma para la gestión del estudio **Diego Arenas Audio**, integrando frontend web, microservicios REST, bases de datos MySQL independientes, balanceo de carga con HAProxy, despliegue con Docker Swarm, procesamiento distribuido con Apache Spark y pruebas de carga con Apache JMeter.
+> Sistema de gestión integral para un estudio de producción musical, construido sobre una arquitectura de microservicios distribuidos con Docker Swarm, balanceo de carga con HAProxy y análisis Big Data con Apache Spark.
 
 ---
-
 ## Integrantes
 
 - Valentina Diaz lobaton
@@ -23,44 +19,42 @@ https://github.com/aglsystems-ragl/PROYECTO_DIEGO_AUDIO
 
 ---
 
-## Tabla de contenido
+## 📋 Tabla de contenido
 
-1. Descripción general
-2. Objetivo del proyecto
-3. Arquitectura general
-4. Infraestructura utilizada
-5. Estructura del repositorio
-6. Tecnologías utilizadas
-7. Microservicios implementados
-8. Reglas de negocio
-9. Puertos del sistema
-10. Flujo de datos del sistema
-11. Preparación del entorno
-12. Despliegue paso a paso
-13. Verificación de funcionamiento
-14. Escalabilidad horizontal
-15. Balanceo de carga con HAProxy
-16. Módulo Analytics con Apache Spark
-17. Dashboard Analytics
-18. Pruebas con Apache JMeter
-19. Resultados de pruebas
-20. Comandos útiles
-21. Evidencias sugeridas
-22. Conclusiones
+- [Descripción general](#-descripción-general)
+- [Arquitectura del sistema](#-arquitectura-del-sistema)
+- [Estructura del repositorio](#-estructura-del-repositorio)
+- [Tecnologías utilizadas](#-tecnologías-utilizadas)
+- [Requisitos previos](#-requisitos-previos)
+- [Configuración de infraestructura](#-configuración-de-infraestructura)
+- [Despliegue con Docker Swarm](#-despliegue-con-docker-swarm)
+- [Microservicios](#-microservicios)
+- [Módulo de análisis distribuido (Spark)](#-módulo-de-análisis-distribuido-spark)
+- [Enrutamiento HAProxy](#-enrutamiento-haproxy)
+- [Bases de datos](#-bases-de-datos)
+- [Escalabilidad y pruebas](#-escalabilidad-y-pruebas)
+- [Autores](#-autores)
 
 ---
 
-# 1. Descripción general
+## 📌 Descripción general
 
-El proyecto **Diego Arenas Audio** corresponde a una aplicación web distribuida diseñada para administrar servicios musicales, clientes, pedidos y pagos de un estudio de audio.
+**Diego Arenas Audio** es una plataforma de gestión interna para un estudio de producción musical independiente. El sistema permite administrar clientes, catálogo de servicios, pedidos y pagos, todo desde una interfaz web unificada. Adicionalmente, incorpora un módulo de analítica distribuida que procesa grandes volúmenes de datos históricos y expone los resultados en un dashboard interactivo.
 
-La solución fue construida bajo una arquitectura de microservicios, donde cada componente funciona de forma independiente, se comunica mediante APIs REST y cuenta con su propia base de datos MySQL. Además, el sistema fue desplegado sobre un clúster Docker Swarm, permitiendo escalar horizontalmente los servicios y balancear el tráfico mediante HAProxy.
+El proyecto fue concebido como una evolución de un sistema CRUD básico hacia una **plataforma distribuida completa**, implementando principios de microservicios, contenedores, orquestación, balanceo de carga y Big Data.
 
-También se integró una capa de analítica distribuida usando Apache Spark, la cual procesa datasets generados a partir de los datos del sistema y produce resultados estadísticos para ser visualizados en un dashboard web.
+### Funcionalidades principales
+
+- Registro y gestión de clientes del estudio
+- Administración del catálogo de servicios musicales (mezcla y masterización)
+- Gestión completa del ciclo de vida de pedidos
+- Registro de pagos con generación de comprobantes PDF
+- Dashboard analítico con insights generados por Apache Spark
+- Balanceo de carga automático entre réplicas de microservicios
+- Escalado horizontal en caliente sin interrupciones de servicio
 
 ---
-
-# 2. Objetivo del proyecto
+# Objetivo del proyecto
 
 ## Objetivo general
 
@@ -82,141 +76,96 @@ Implementar una arquitectura distribuida basada en microservicios, contenedores 
 
 ---
 
-# 3. Arquitectura general
+## 🏗️ Arquitectura del sistema
 
-La arquitectura se compone de cinco capas principales:
+La arquitectura se despliega sobre dos máquinas virtuales Ubuntu configuradas como clúster Docker Swarm.
 
-1. **Capa de presentación:** frontend web.
-2. **Capa de enrutamiento:** HAProxy como proxy inverso y balanceador.
-3. **Capa de microservicios:** clientes, servicios, pedidos y pagos.
-4. **Capa de persistencia:** bases de datos MySQL independientes.
-5. **Capa analítica:** Apache Spark, datasets y dashboard Analytics.
-
-## Diagrama lógico simplificado
-
-```text
-Usuario / Navegador
-        |
-        v
-Frontend Web
-        |
-        v
-HAProxy - Balanceador / Gateway
-        |
-        +----------------+----------------+----------------+----------------+
-        |                |                |                |
-        v                v                v                v
-MS Clientes       MS Servicios      MS Pedidos        MS Pagos
-        |                |                |                |
-        v                v                v                v
-MySQL Clientes    MySQL Servicios    MySQL Pedidos     MySQL Pagos
-
-
-Capa Analytics:
-
-APIs / JSON / CSV
-        |
-        v
-dataset_audio_maestro.csv
-        |
-        v
-dataset_audio_bigdata_10000.csv
-        |
-        v
-Apache Spark / PySpark
-        |
-        v
-resultados_analytics.json
-        |
-        v
-Dashboard Analytics
+```
+                         Internet
+                             │
+                    raglsystems.com.co
+                             │
+              ┌──────────────▼──────────────┐
+              │     servidorUbuntu1          │
+              │     IP: 192.168.100.2        │
+              │     Rol: Swarm Manager       │
+              │                              │
+              │  ┌────────────────────────┐  │
+              │  │  HAProxy :80 / :8404   │  │
+              │  └────────────────────────┘  │
+              │  ┌────────────────────────┐  │
+              │  │   MySQL (4 bases)      │  │
+              │  └────────────────────────┘  │
+              │  ┌────────────────────────┐  │
+              │  │   Apache Spark         │  │
+              │  │   Analytics Module     │  │
+              │  └────────────────────────┘  │
+              └──────────────────────────────┘
+                             │
+                    red overlay (Swarm)
+                             │
+              ┌──────────────▼──────────────┐
+              │     servidorUbuntu2          │
+              │     IP: 192.168.100.3        │
+              │     Rol: Swarm Worker        │
+              │                              │
+              │  ┌────────────────────────┐  │
+              │  │  Frontend Nginx :8080  │  │
+              │  └────────────────────────┘  │
+              │  ┌──────┐ ┌──────┐           │
+              │  │ :3001│ │ :3000│           │
+              │  │Clien.│ │Serv. │  (×2 répl)│
+              │  └──────┘ └──────┘           │
+              │  ┌──────┐ ┌──────┐           │
+              │  │ :3002│ │ :3003│           │
+              │  │Pedid.│ │Pagos │           │
+              │  └──────┘ └──────┘           │
+              └──────────────────────────────┘
 ```
 
 ---
 
-# 4. Infraestructura utilizada
+## 📁 Estructura del repositorio
 
-El proyecto fue ejecutado sobre dos máquinas virtuales Ubuntu creadas con Vagrant.
-
-| Máquina | IP | Rol principal | Componentes |
-|---|---|---|---|
-| servidorUbuntu1 | 192.168.100.2 | Nodo manager Docker Swarm | Backend, microservicios, bases de datos, Spark Analytics, administración del clúster |
-| servidorUbuntu2 | 192.168.100.3 | Nodo worker Docker Swarm | Frontend, acceso web, HAProxy Stats y servicios distribuidos |
-
-## Roles del clúster
-
-| Nodo | Rol Docker Swarm |
-|---|---|
-| servidorUbuntu1 | Manager |
-| servidorUbuntu2 | Worker |
-
----
-
-# 5. Estructura del repositorio
-
-La estructura final del repositorio quedó organizada de forma modular:
-
-```text
+```
 PROYECTO_DIEGO_AUDIO/
 │
-├── analytics_spark/
-│   ├── clientes.json
-│   ├── servicios.json
-│   ├── pedidos.json
-│   ├── pagos.json
-│   ├── dataset_audio_maestro.csv
-│   ├── dataset_audio_bigdata_10000.csv
-│   ├── resultados_analytics.json
-│   ├── scripts/
-│   └── top_servicios_rdd/
+├── analytics_spark/              # Módulo de procesamiento Big Data
+│   ├── generar_dataset.py        # Unifica datos de APIs en CSV maestro
+│   ├── generar_bigdata.py        # Genera 10.000 registros para análisis
+│   ├── spark_audio_analytics.py  # Job PySpark: RDD + MapReduce + Broadcast
+│   └── resultados_analytics.json # Resultados exportados por Spark
 │
-├── docker/
-│   └── docker-compose-swarm.yml
+├── docker/                       # Configuración general de orquestación
+│   └── docker-compose-swarm.yml  # Stack completo para Docker Swarm
 │
-├── docs/
-│   ├── arquitectura/
-│   ├── evidencias/
-│   └── pruebas/
-│
-├── frontend/
-│   ├── analytics/
-│   ├── clientes/
-│   ├── servicios/
-│   ├── pedidos/
-│   ├── pagos/
-│   ├── css/
-│   ├── imagenes/
-│   ├── index.html
+├── frontend/                     # Interfaz web del sistema
 │   ├── Dockerfile
-│   └── docker-compose-swarm.yml
+│   └── /front_audio_docker/      # HTML, CSS, JS, Bootstrap + Analytics
 │
-├── haproxy/
+├── haproxy/                      # Balanceador de carga
 │   ├── Dockerfile
-│   └── haproxy.cfg
+│   └── haproxy.cfg               # ACLs, backends, stats
 │
-├── ms-clientes/
+├── ms-clientes/                  # Microservicio de clientes (Node.js)
 │   ├── Dockerfile
-│   ├── package.json
-│   ├── package-lock.json
-│   └── src/
+│   ├── index.js
+│   └── package.json
 │
-├── ms-servicios/
+├── ms-pagos/                     # Microservicio de pagos y PDF (Node.js)
 │   ├── Dockerfile
-│   ├── package.json
-│   ├── package-lock.json
-│   └── src/
+│   ├── index.js
+│   └── package.json
 │
-├── ms-pedidos/
+├── ms-pedidos/                   # Microservicio de pedidos (Node.js)
 │   ├── Dockerfile
-│   ├── package.json
-│   ├── package-lock.json
-│   └── src/
+│   ├── index.js
+│   └── package.json
 │
-├── ms-pagos/
+├── ms-servicios/                 # Microservicio de catálogo (Node.js)
 │   ├── Dockerfile
-│   ├── package.json
-│   ├── package-lock.json
-│   └── src/
+│   ├── index.js
+│   └── package.json
 │
 ├── .gitignore
 └── README.md
@@ -224,26 +173,23 @@ PROYECTO_DIEGO_AUDIO/
 
 ---
 
-# 6. Tecnologías utilizadas
+## 🛠️ Tecnologías utilizadas
 
-| Categoría | Tecnología |
-|---|---|
-| Frontend | HTML5, CSS, Bootstrap, JavaScript |
-| Backend | Node.js, Express |
-| Base de datos | MySQL 8 |
-| Contenedores | Docker |
-| Orquestación | Docker Swarm |
-| Balanceo de carga | HAProxy |
-| Procesamiento distribuido | Apache Spark / PySpark |
-| Lenguaje Analytics | Python |
-| Pruebas de carga | Apache JMeter 5.6.3 |
-| Máquinas virtuales | Vagrant + VirtualBox |
-| Sistema operativo | Ubuntu Server |
-| Control de versiones | Git + GitHub |
+| Categoría | Tecnología | Versión | Propósito |
+|-----------|------------|---------|-----------|
+| Contenedores | Docker | 24+ | Empaquetado de todos los servicios |
+| Orquestación | Docker Swarm | built-in | Clúster multi-nodo + escalado |
+| Balanceo | HAProxy | 2.9 | Gateway, enrutamiento y stats |
+| Frontend | Nginx | Alpine | Servidor web y dashboard |
+| Backend | Node.js + Express | 18 LTS | Microservicios REST |
+| Base de datos | MySQL | 8.0 | Persistencia por microservicio |
+| Big Data | Apache Spark / PySpark | 4.1.2 | Procesamiento distribuido |
+| Virtualización | VirtualBox + Vagrant | - | Infraestructura local |
+| Registro | Docker Hub | - | Imágenes: `aglsystems/*` |
+| Pruebas de carga | Apache JMeter | - | Escalabilidad y desempeño |
 
 ---
-
-# 7. Microservicios implementados
+# Microservicios implementados
 
 | Microservicio | Carpeta | Puerto interno | Descripción |
 |---|---|---:|---|
@@ -255,8 +201,7 @@ PROYECTO_DIEGO_AUDIO/
 Cada microservicio tiene código fuente independiente, Dockerfile propio, dependencias propias, API REST propia, base de datos independiente y posibilidad de escalar de forma separada.
 
 ---
-
-# 8. Reglas de negocio
+# Reglas de negocio
 
 Las principales reglas de negocio implementadas fueron:
 
@@ -278,8 +223,7 @@ Las principales reglas de negocio implementadas fueron:
 - Aunque el frontend ayuda visualmente, el backend es quien impone la regla.
 
 ---
-
-# 9. Puertos del sistema
+# Puertos del sistema
 
 | Componente | Puerto | Descripción |
 |---|---:|---|
@@ -296,8 +240,7 @@ Las principales reglas de negocio implementadas fueron:
 | MySQL Pagos | 3310 | Base de datos de pagos |
 
 ---
-
-# 10. Flujo de datos del sistema
+# Flujo de datos del sistema
 
 ## Flujo transaccional
 
@@ -324,9 +267,24 @@ APIs / datos exportados
 
 ---
 
-# 11. Preparación del entorno
+## ✅ Requisitos previos
 
-## 11.1 Iniciar máquinas virtuales
+Antes de desplegar el sistema, asegúrate de contar con:
+
+- VirtualBox instalado (versión 6.1+)
+- Vagrant instalado (versión 2.3+)
+- Dos máquinas virtuales Ubuntu 22.04 configuradas con las IPs:
+  - `192.168.100.2` → servidorUbuntu1
+  - `192.168.100.3` → servidorUbuntu2
+- Docker Engine instalado en ambos servidores
+- Acceso a Docker Hub (para pull de imágenes `aglsystems/*`)
+- Python 3 + PySpark 4.1.2 instalado en servidorUbuntu1 (para Spark)
+
+---
+
+# Preparación del entorno
+
+## Iniciar máquinas virtuales
 
 Desde Windows, en la carpeta donde está el archivo Vagrantfile:
 
@@ -352,7 +310,7 @@ Obtener privilegios root:
 sudo -i
 ```
 
-## 11.2 Verificar IPs
+## Verificar IPs
 
 En cada máquina:
 
@@ -367,117 +325,257 @@ servidorUbuntu1: 192.168.100.2
 servidorUbuntu2: 192.168.100.3
 ```
 
-## 11.3 Verificar Docker
+## Verificar Docker
 
 ```bash
 docker --version
 docker ps
 ```
 
----
+## ⚙️ Configuración de infraestructura
 
-# 12. Despliegue paso a paso
+### Inicializar el clúster Docker Swarm
 
-## 12.1 Clonar el repositorio
-
-En `servidorUbuntu1`:
-
-```bash
-cd /var/www
-git clone https://github.com/aglsystems-ragl/PROYECTO_DIEGO_AUDIO.git
-cd PROYECTO_DIEGO_AUDIO
-```
-
-## 12.2 Inicializar Docker Swarm
-
-En `servidorUbuntu1`:
+En **servidorUbuntu1** (Manager):
 
 ```bash
 docker swarm init --advertise-addr 192.168.100.2
 ```
 
-Obtener token para unir el worker:
+Copia el token que genera el comando y ejecútalo en **servidorUbuntu2** (Worker):
 
 ```bash
-docker swarm join-token worker
+docker swarm join --token <TOKEN> 192.168.100.2:2377
 ```
 
-El comando generado será similar a:
-
-```bash
-docker swarm join --token <TOKEN_GENERADO> 192.168.100.2:2377
-```
-
-## 12.3 Unir servidorUbuntu2 al clúster
-
-En `servidorUbuntu2`, ejecutar el comando generado:
-
-```bash
-docker swarm join --token <TOKEN_GENERADO> 192.168.100.2:2377
-```
-
-## 12.4 Verificar nodos
-
-En `servidorUbuntu1`:
+Verifica que ambos nodos estén activos:
 
 ```bash
 docker node ls
 ```
 
-Debe aparecer algo similar:
+---
 
-```text
-servidorUbuntu1   Ready   Active   Leader
-servidorUbuntu2   Ready   Active
-```
+## 🚀 Despliegue con Docker Swarm
 
-## 12.5 Desplegar el stack
-
-Desde `servidorUbuntu1`:
+Desde **servidorUbuntu1**, clona el repositorio y despliega el stack completo:
 
 ```bash
-cd /var/www/PROYECTO_DIEGO_AUDIO/docker
+git clone https://github.com/aglsystems-ragl/PROYECTO_DIEGO_AUDIO.git
+cd PROYECTO_DIEGO_AUDIO/docker
+
 docker stack deploy -c docker-compose-swarm.yml talleraudio
 ```
 
-## 12.6 Verificar servicios
+Verifica que todos los servicios estén en ejecución:
 
 ```bash
-docker service ls
+docker stack services talleraudio
+docker stack ps talleraudio
 ```
 
-Servicios esperados:
+Accede al sistema desde el navegador:
 
-```text
-talleraudio_clientes
-talleraudio_servicios
-talleraudio_pedidos
-talleraudio_pagos
-talleraudio_db_clientes
-talleraudio_db_servicios
-talleraudio_db_pedidos
-talleraudio_db_pagos
-talleraudio_frontend
-talleraudio_haproxy
+```
+http://raglsystems.com.co
+http://192.168.100.2        ← si no tienes DNS configurado
+```
+
+Panel de estadísticas HAProxy:
+
+```
+http://raglsystems.com.co:8404/haproxy?stats
 ```
 
 ---
 
-# 13. Verificación de funcionamiento
+## 🔧 Microservicios
 
-## 13.1 Verificar contenedores
+Cada microservicio corre de forma independiente con su propia lógica de negocio, base de datos y contenedor.
+
+### Clientes — puerto 3001
+```
+Imagen:   aglsystems/clientes-ms:2.0
+Réplicas: 2
+Base:     diegoAudio_clientes_db
+Función:  CRUD completo de clientes del estudio
+```
+
+### Servicios — puerto 3000
+```
+Imagen:   aglsystems/servicios-ms:2.0
+Réplicas: 1
+Base:     diegoAudio_db
+Función:  Catálogo de servicios musicales (mezcla y masterización)
+```
+
+### Pedidos — puerto 3002
+```
+Imagen:   aglsystems/pedidos-ms:2.0
+Réplicas: 1
+Base:     diegoAudio_pedidos_db
+Función:  Gestión del ciclo de vida de pedidos y lógica de negocio
+```
+
+### Pagos — puerto 3003
+```
+Imagen:   aglsystems/pagos-ms:2.0
+Réplicas: 1
+Base:     diegoAudio_pagos_db
+Función:  Registro de transacciones y generación de comprobantes PDF
+```
+
+### Reglas de negocio clave (Pedidos y Pagos)
+
+- Un pedido puede tener múltiples intentos de pago; solo uno puede ser exitoso.
+- Al confirmar un pago, el pedido cambia automáticamente a estado `Confirmado`.
+- Un pedido confirmado no puede editarse ni eliminarse si tiene historial de pagos.
+- Las validaciones críticas viven en el backend, no en el frontend.
+- Los triggers SQL entre bases fueron eliminados: la sincronización se gestiona desde el backend para respetar el desacoplamiento entre microservicios.
+
+---
+
+## 📊 Módulo de análisis distribuido (Spark)
+
+El módulo de analítica distribuida está ubicado en `analytics_spark/` y se ejecuta directamente en **servidorUbuntu1**.
+
+### Cómo funciona
+
+```
+APIs REST de microservicios
+         │
+         ▼
+   generar_dataset.py          ← unifica clientes, pedidos, pagos, servicios
+         │
+         ▼
+  dataset_audio_maestro.csv
+         │
+         ▼
+   generar_bigdata.py           ← amplifica a 10.000 registros para Big Data
+         │
+         ▼
+  dataset_audio_bigdata_10000.csv
+         │
+         ▼
+  spark_audio_analytics.py      ← Job PySpark: RDD + MapReduce + Broadcast + Accumulators
+         │
+         ▼
+  resultados_analytics.json     ← consumido por el dashboard web
+```
+
+## Archivos principales
+
+| Archivo | Descripción |
+|---|---|
+| `clientes.json` | Datos exportados del microservicio clientes |
+| `servicios.json` | Datos exportados del microservicio servicios |
+| `pedidos.json` | Datos exportados del microservicio pedidos |
+| `pagos.json` | Datos exportados del microservicio pagos |
+| `dataset_audio_maestro.csv` | Dataset maestro integrado |
+| `dataset_audio_bigdata_10000.csv` | Dataset ampliado para procesamiento distribuido |
+| `resultados_analytics.json` | Resultado final consumido por el dashboard |
+| `scripts/` | Scripts de generación y procesamiento |
+| `top_servicios_rdd/` | Resultado generado por RDD |
+
+## Flujo Analytics
+
+```text
+1. Se consumen APIs reales.
+2. Se exportan datos en JSON.
+3. Se genera un dataset maestro.
+4. Se amplía el dataset a 10.000 registros.
+5. Spark procesa el CSV con RDD.
+6. Se aplican operaciones tipo MapReduce.
+7. Se usan acumuladores y broadcast.
+8. Se exportan resultados a JSON.
+9. El dashboard lee el JSON y muestra gráficas.
+```
+
+
+### Ejecutar el pipeline completo
+
+```bash
+cd /var/www/analytics_audio/scripts
+
+# 1. Generar dataset maestro desde las APIs
+python3 generar_dataset.py
+
+# 2. Amplificar a volumen Big Data (10.000 registros)
+python3 generar_bigdata.py
+
+# 3. Ejecutar análisis distribuido con Spark
+python3 spark_audio_analytics.py
+
+# 4. Verificar resultados exportados
+cat /var/www/analytics_audio/resultados_analytics.json
+```
+
+### Operaciones distribuidas implementadas
+
+| Operación Spark | Uso en el proyecto |
+|---|---|
+| `SparkContext` + `textFile()` | Carga del dataset como RDD distribuido |
+| `map()` + `flatMap()` | Parseo de registros CSV con `csv.reader` |
+| `filter()` | Eliminación del encabezado y datos inválidos |
+| `reduceByKey()` | Agrupación de ingresos por método de pago y conteo de servicios |
+| `sortBy()` | Ranking de top servicios y top clientes |
+| `broadcast` | Distribución eficiente del catálogo de servicios entre nodos |
+| `accumulator` | Conteo distribuido de pagos rechazados |
+
+### Insights generados
+
+- 📈 Ingresos totales por método de pago (Efectivo, Tarjeta, Nequi, Daviplata, Transferencia)
+- 🎵 Top servicios más solicitados (Mezcla de voz, Mezcla instrumental, Mastering)
+- 👤 Top clientes por volumen económico acumulado
+- ❌ Cantidad total de pagos rechazados (mediante acumuladores)
+- 📦 Total de registros procesados de forma distribuida
+
+### Dashboard Analytics
+
+Los resultados se visualizan en:
+
+```
+http://raglsystems.com.co/analytics/index.html
+```
+
+El dashboard carga `resultados_analytics.json` y genera gráficos dinámicos de barras usando Chart.js.
+
+---
+
+## 🔀 Enrutamiento HAProxy
+
+HAProxy actúa como punto de entrada único del sistema. Todas las peticiones entran por el puerto 80 y se distribuyen según la ruta.
+
+| Ruta | Destino |
+|------|---------|
+| `/` | Frontend (Nginx) |
+| `/api/clientes` | Microservicio clientes `:3001` |
+| `/api/servicios` | Microservicio servicios `:3000` |
+| `/api/pedidos` | Microservicio pedidos `:3002` |
+| `/api/pagos` | Microservicio pagos `:3003` |
+| `/facturas` | Microservicio pagos (PDF) `:3003` |
+| `/analytics` | Dashboard Analytics |
+| `/resultados_analytics.json` | Resultados Spark (JSON) |
+
+El algoritmo de balanceo es **round-robin**. HAProxy detecta automáticamente backends caídos y redirige el tráfico hacia las réplicas disponibles.
+
+---
+
+# Verificación de funcionamiento
+
+## Verificar contenedores
 
 ```bash
 docker ps
 ```
 
-## 13.2 Verificar servicios Swarm
+## Verificar servicios Swarm
 
 ```bash
 docker service ls
 ```
 
-## 13.3 Verificar APIs desde HAProxy
+## Verificar APIs desde HAProxy
 
 ```bash
 for ruta in clientes servicios pedidos pagos; do
@@ -493,7 +591,7 @@ Resultado esperado:
 HTTP 200
 ```
 
-## 13.4 Verificar frontend
+## Verificar frontend
 
 Abrir en navegador:
 
@@ -501,7 +599,7 @@ Abrir en navegador:
 http://192.168.100.3:8080
 ```
 
-## 13.5 Verificar HAProxy Stats
+## Verificar HAProxy Stats
 
 Abrir:
 
@@ -513,185 +611,49 @@ Debe mostrar los backends en estado `UP`.
 
 ---
 
-# 14. Escalabilidad horizontal
+## 🗄️ Bases de datos
 
-## 14.1 Escalar a 4 réplicas
+Cada microservicio tiene su propia base de datos MySQL independiente, garantizando desacoplamiento total de datos.
 
-```bash
-docker service scale talleraudio_clientes=4 talleraudio_servicios=4 talleraudio_pedidos=4 talleraudio_pagos=4
-```
+| Base de datos | Microservicio | Descripción |
+|---|---|---|
+| `diegoAudio_clientes_db` | ms-clientes | Perfiles y datos de clientes |
+| `diegoAudio_db` | ms-servicios | Catálogo de servicios musicales |
+| `diegoAudio_pedidos_db` | ms-pedidos | Órdenes y estados de pedidos |
+| `diegoAudio_pagos_db` | ms-pagos | Transacciones y comprobantes |
 
-## 14.2 Verificar escalamiento
-
-```bash
-docker service ls
-```
-
-Resultado esperado:
-
-```text
-talleraudio_clientes    4/4
-talleraudio_servicios   4/4
-talleraudio_pedidos     4/4
-talleraudio_pagos       4/4
-```
-
-## 14.3 Monitorear en tiempo real
-
-```bash
-watch docker service ls
-```
-
-## 14.4 Regresar a 2 réplicas
-
-```bash
-docker service scale talleraudio_clientes=2 talleraudio_servicios=2 talleraudio_pedidos=2 talleraudio_pagos=2
-```
+Los datos persisten mediante **volúmenes Docker**, sobreviviendo reinicios de contenedores.
 
 ---
 
-# 15. Balanceo de carga con HAProxy
+## 📈 Escalabilidad y pruebas
 
-HAProxy funciona como punto de entrada para las APIs. Su función principal es recibir las solicitudes del usuario o de JMeter y distribuirlas hacia las réplicas activas de los microservicios.
-
-## 15.1 Archivo de configuración
-
-Ruta dentro del repositorio:
-
-```text
-haproxy/haproxy.cfg
-```
-
-## 15.2 Funciones implementadas
-
-- Proxy inverso.
-- Balanceo de carga.
-- Health checks.
-- Enrutamiento por rutas `/api`.
-- Monitoreo mediante panel Stats.
-- Distribución de solicitudes hacia microservicios.
-
-## 15.3 Acceso al panel
-
-```text
-http://192.168.100.3:8404/stats
-```
-
----
-
-# 16. Módulo Analytics con Apache Spark
-
-El módulo Analytics se encuentra en:
-
-```text
-analytics_spark/
-```
-
-## 16.1 Archivos principales
-
-| Archivo | Descripción |
-|---|---|
-| `clientes.json` | Datos exportados del microservicio clientes |
-| `servicios.json` | Datos exportados del microservicio servicios |
-| `pedidos.json` | Datos exportados del microservicio pedidos |
-| `pagos.json` | Datos exportados del microservicio pagos |
-| `dataset_audio_maestro.csv` | Dataset maestro integrado |
-| `dataset_audio_bigdata_10000.csv` | Dataset ampliado para procesamiento distribuido |
-| `resultados_analytics.json` | Resultado final consumido por el dashboard |
-| `scripts/` | Scripts de generación y procesamiento |
-| `top_servicios_rdd/` | Resultado generado por RDD |
-
-## 16.2 Flujo Analytics
-
-```text
-1. Se consumen APIs reales.
-2. Se exportan datos en JSON.
-3. Se genera un dataset maestro.
-4. Se amplía el dataset a 10.000 registros.
-5. Spark procesa el CSV con RDD.
-6. Se aplican operaciones tipo MapReduce.
-7. Se usan acumuladores y broadcast.
-8. Se exportan resultados a JSON.
-9. El dashboard lee el JSON y muestra gráficas.
-```
-
-## 16.3 Ejecutar análisis Spark
-
-Ubicarse en la carpeta de Analytics:
+### Escalar un microservicio en caliente
 
 ```bash
-cd /var/www/PROYECTO_DIEGO_AUDIO/analytics_spark/scripts
+# Escalar clientes a 4 réplicas
+docker service scale talleraudio_clientes=4
+
+# Verificar distribución de réplicas entre nodos
+docker service ps talleraudio_clientes
 ```
 
-Ejecutar el procesamiento:
+HAProxy detecta las nuevas réplicas automáticamente y empieza a enviarles tráfico de inmediato sin necesidad de reiniciar.
 
-```bash
-python3 spark_audio_analytics.py
-```
+### Pruebas de carga con JMeter
 
-Si se ejecuta con Spark:
+El plan de pruebas (`DiegoArenasAudio_LoadTest.jmx`) simula carga concurrente contra todos los endpoints:
 
-```bash
-spark-submit spark_audio_analytics.py
-```
+- **Usuarios simulados:** 100 hilos
+- **Ramp-up:** 10 segundos
+- **Iteraciones por usuario:** 10
+- **Endpoints evaluados:** `/api/clientes`, `/api/servicios`, `/api/pedidos`, `/api/pagos`
 
-## 16.4 Resultados generados
+Se ejecutaron dos escenarios comparativos:
+1. **Escenario base:** 2 réplicas de clientes y servicios
+2. **Escenario escalado:** 4 réplicas de clientes y servicios
 
-El archivo final es:
-
-```text
-resultados_analytics.json
-```
-
-Contiene:
-
-- Total de registros procesados.
-- Ingresos por método de pago.
-- Servicios más solicitados.
-- Pagos rechazados.
-- Top clientes por valor acumulado.
-
----
-
-# 17. Dashboard Analytics
-
-El dashboard se encuentra en:
-
-```text
-frontend/analytics/index.html
-```
-
-Acceso:
-
-```text
-http://192.168.100.3:8080/analytics/index.html
-```
-
-El dashboard muestra:
-
-- Total de registros procesados.
-- Pagos rechazados.
-- Servicio más solicitado.
-- Ingresos por método de pago.
-- Top servicios.
-- Top clientes.
-
----
-
-# 18. Pruebas con Apache JMeter
-
-Las pruebas se realizaron con Apache JMeter 5.6.3 desde Windows.
-
-## 18.1 Configuración general
-
-Se probaron los siguientes endpoints:
-
-| Grupo JMeter | Endpoint |
-|---|---|
-| TG_Clientes | `/api/clientes` |
-| TG_Servicios | `/api/servicios` |
-| TG_Pedidos | `/api/pedidos` |
-| TG_Pagos | `/api/pagos` |
+Los resultados (tiempo de respuesta, throughput, % de error) se comparan para demostrar la mejora de desempeño al escalar horizontalmente.
 
 Servidor usado en JMeter:
 
@@ -705,7 +667,7 @@ Puerto:
 80
 ```
 
-## 18.2 Escenarios de prueba
+## Escenarios de prueba
 
 | Prueba | Réplicas microservicios | Usuarios por grupo | Ramp-Up | Loop | Objetivo |
 |---|---:|---:|---:|---:|---|
@@ -717,9 +679,21 @@ Puerto:
 
 ---
 
-# 19. Resultados de pruebas
+### Recuperación automática ante fallos
 
-## 19.1 Consolidado general
+```bash
+# Simular caída de un contenedor
+docker rm -f <id_contenedor>
+
+# Docker Swarm lo reemplaza automáticamente en ~10 segundos
+docker service ps talleraudio_clientes
+```
+
+---
+
+# Resultados de pruebas
+
+## Consolidado general
 
 | Prueba | Réplicas MS | Usuarios | Loop | Avg Resp. | Error promedio | Throughput promedio | Estado Docker Swarm | Estado HAProxy | Resultado general |
 |---|---:|---:|---:|---|---|---|---|---|---|
@@ -729,7 +703,7 @@ Puerto:
 | Estrés controlado | 4 | 150 | 5 | 1800-3600 ms | 20%-29% | 37-48 req/min | 4/4 activos | UP | Plataforma estable |
 | Saturación | 4 | 200 | 5 | 1200-3500 ms | 19%-21% | 38-49 req/min | 4/4 activos | UP | Excelente comportamiento |
 
-## 19.2 Interpretación general
+## Interpretación general
 
 Las pruebas demostraron que el sistema puede escalar horizontalmente. Al pasar de 2 a 4 réplicas por microservicio, el throughput aumentó y el porcentaje de errores disminuyó. Esto indica que Docker Swarm distribuyó correctamente la carga y que HAProxy mantuvo activos los backends durante los escenarios de prueba.
 
@@ -739,7 +713,7 @@ El principal cuello de botella identificado fue la capa de persistencia, especia
 
 ---
 
-# 20. Comandos útiles
+# Comandos útiles
 
 ## Ver servicios
 
@@ -801,25 +775,8 @@ done
 
 ---
 
-# 21. Evidencias sugeridas
 
-Se recomienda guardar en `docs/evidencias/`:
-
-- Captura del frontend principal.
-- Captura del módulo Analytics.
-- Captura de HAProxy Stats.
-- Captura de Docker Swarm con 2 réplicas.
-- Captura de Docker Swarm con 4 réplicas.
-- Captura de `docker stats`.
-- Capturas de JMeter Summary Report.
-- Capturas de JMeter Aggregate Report.
-- Capturas de Response Time Graph.
-- Captura de datasets generados.
-- Captura de resultados Spark.
-
----
-
-# 22. Conclusiones
+# Conclusiones
 
 El proyecto permitió implementar una arquitectura distribuida funcional utilizando microservicios, Docker Swarm, HAProxy, MySQL, frontend web, Apache Spark y JMeter.
 
@@ -833,15 +790,20 @@ En general, el sistema cumple con los requerimientos del proyecto final: funcion
 
 ---
 
-# Créditos
 
-Proyecto desarrollado por:
+## 👨‍💻 Autores
 
-- Valentina Diaz Lobaton
-- Rodrigo Andrés Gómez López
-- Diego Arenas Laso
+Proyecto desarrollado para el curso de **Redes e Infraestructura** — Universidad Autónoma de Occidente (UAO), 2026.
 
-Curso: Infraestructura / Arquitecturas Distribuidas  
-Proyecto: Diego Arenas Audio  
-Repositorio: `aglsystems-ragl`
+| Nombre | Contacto |
+|--------|----------|
+| Diego Fernando Arenas Lasso | diego_fer.arenas@uao.edu.co |
+| Valentina Díaz Lobatón | valentina.diaz_l@uao.edu.co |
+| Rodrigo Andrés Gómez Lopez | rodrigo_and.gomez@uao.edu.co |
+
+---
+
+> **Docente:** Oscar Mondragón  
+> **Universidad:** Universidad Autónoma de Occidente — Cali, Colombia  
+> **Docker Hub:** [hub.docker.com/u/aglsystems](https://hub.docker.com/u/aglsystems)
 https://github.com/aglsystems-ragl/PROYECTO_DIEGO_AUDIO
