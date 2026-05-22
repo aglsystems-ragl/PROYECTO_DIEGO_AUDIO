@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Consultar Servicio</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body{
+      background: linear-gradient(135deg, #f4f6f9, #e9eef5);
+      min-height: 100vh;
+    }
+
+    .navbar-brand{
+      font-weight: 600;
+      font-size: 1.8rem;
+    }
+
+    .hero-card{
+      border: none;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+      margin-top: 30px;
+    }
+
+    .hero-img{
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+    }
+
+    .content-card{
+      border: none;
+      border-radius: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      margin-top: 25px;
+    }
+
+    .preview-card{
+      background: #f8fafc;
+      border: 1px solid #dbe3ef;
+      border-radius: 15px;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">🎵 Diego Arenas Audio</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavConsultar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavConsultar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="ver_servicios.html">Ver Servicios</a></li>
+          <li class="nav-item"><a class="nav-link" href="insertar_servicio.html">Insertar</a></li>
+          <li class="nav-item"><a class="nav-link active" href="consultar_servicio.html">Consultar</a></li>
+          <li class="nav-item"><a class="nav-link" href="editar_servicio.html">Editar</a></li>
+          <li class="nav-item"><a class="nav-link" href="borrar_servicio.html">Eliminar</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container pb-5">
+    <div class="card hero-card">
+      <img src="../imagenes/banner_audio.jpg" alt="Banner Diego Arenas Audio" class="hero-img">
+      <div class="card-body text-center">
+        <h2 class="mb-2">Consultar Servicio</h2>
+        <p class="text-muted mb-0">
+          Selecciona un servicio del catálogo para ver sus detalles.
+        </p>
+      </div>
+    </div>
+
+    <div class="card content-card">
+      <div class="card-body p-4">
+        <form id="buscar-form" class="mb-4">
+          <label for="servicioSelect" class="form-label">Selecciona un servicio</label>
+          <select id="servicioSelect" class="form-select mb-3" required>
+            <option value="">Cargando servicios...</option>
+          </select>
+
+          <button type="submit" class="btn btn-primary">Consultar</button>
+          <a href="index.html" class="btn btn-secondary ms-2">Volver</a>
+        </form>
+
+        <div id="resultado" class="d-none preview-card">
+          <h4 class="mb-3">Detalles del servicio</h4>
+          <ul class="list-group">
+            <li class="list-group-item"><strong>ID:</strong> <span id="sid"></span></li>
+            <li class="list-group-item"><strong>Nombre:</strong> <span id="snombre"></span></li>
+            <li class="list-group-item"><strong>Precio:</strong> $<span id="sprecio"></span></li>
+            <li class="list-group-item"><strong>Descripción:</strong> <span id="sdescripcion"></span></li>
+          </ul>
+        </div>
+
+        <div id="mensaje" class="alert mt-4 d-none"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = '/api/servicios/api/servicios';
+
+    const buscarForm = document.getElementById('buscar-form');
+    const servicioSelect = document.getElementById('servicioSelect');
+    const resultado = document.getElementById('resultado');
+    const mensaje = document.getElementById('mensaje');
+
+    function mostrarMensaje(texto, tipo = 'danger') {
+      mensaje.className = `alert alert-${tipo} mt-4`;
+      mensaje.textContent = texto;
+      mensaje.classList.remove('d-none');
+    }
+
+    function ocultarMensaje() {
+      mensaje.classList.add('d-none');
+      mensaje.textContent = '';
+    }
+
+    async function cargarServicios() {
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+
+        servicioSelect.innerHTML = '<option value="">Seleccione un servicio</option>';
+
+        if (!Array.isArray(data) || data.length === 0) {
+          servicioSelect.innerHTML = '<option value="">No hay servicios disponibles</option>';
+          return;
+        }
+
+        data.forEach(servicio => {
+          const option = document.createElement('option');
+          option.value = servicio.id;
+          option.textContent = `ID: ${servicio.id} | ${servicio.nombre} | $${servicio.precio}`;
+          servicioSelect.appendChild(option);
+        });
+      } catch (error) {
+        servicioSelect.innerHTML = '<option value="">Error cargando servicios</option>';
+        mostrarMensaje('No se pudieron cargar los servicios.', 'danger');
+      }
+    }
+
+    buscarForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      ocultarMensaje();
+
+      const id = servicioSelect.value;
+
+      if (!id) {
+        mostrarMensaje('Debes seleccionar un servicio.', 'warning');
+        resultado.classList.add('d-none');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/${id}`);
+        const data = await res.json();
+
+        if (!res.ok || data.error) {
+          throw new Error(data.error || 'Servicio no encontrado');
+        }
+
+        resultado.classList.remove('d-none');
+        document.getElementById('sid').textContent = data.id;
+        document.getElementById('snombre').textContent = data.nombre;
+        document.getElementById('sprecio').textContent = data.precio;
+        document.getElementById('sdescripcion').textContent = data.descripcion;
+      } catch (err) {
+        resultado.classList.add('d-none');
+        mostrarMensaje('Servicio no encontrado.', 'danger');
+        console.error(err);
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', cargarServicios);
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

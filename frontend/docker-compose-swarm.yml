@@ -1,0 +1,10 @@
+  frontend:
+    image: aglsystems/frontaudio:1.0
+    ports:
+      - "8080:80"
+    networks:
+      - audio_net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure

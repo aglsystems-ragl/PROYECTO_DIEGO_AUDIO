@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Eliminar Servicio - Diego Arenas Audio</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body{
+      background: linear-gradient(135deg, #f8f9fb, #edf2f7);
+      min-height: 100vh;
+    }
+
+    .navbar-brand{
+      font-weight: 600;
+      font-size: 1.8rem;
+    }
+
+    .hero-card{
+      border: none;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+      margin-top: 35px;
+    }
+
+    .hero-header{
+      background: linear-gradient(90deg, #dc3545, #ef4444);
+      color: white;
+      text-align: center;
+      padding: 22px;
+    }
+
+    .hero-header h1{
+      margin: 0;
+      font-size: 2.2rem;
+      font-weight: 500;
+    }
+
+    .hero-img{
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+    }
+
+    .section-card{
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      padding: 30px;
+      margin-top: 25px;
+    }
+
+    .warning-box{
+      background: #fff5f5;
+      border: 1px solid #fecaca;
+      border-radius: 14px;
+      padding: 18px;
+      color: #991b1b;
+      margin-bottom: 20px;
+    }
+
+    .btn-custom{
+      min-width: 150px;
+      border-radius: 10px;
+    }
+
+    .form-control, .form-select{
+      border-radius: 10px;
+    }
+
+    .preview-card{
+      background: #f8fafc;
+      border: 1px solid #dbe3ef;
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .subtitulo{
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">🎵 Diego Arenas Audio</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavEliminar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavEliminar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="ver_servicios.html">Ver Servicios</a></li>
+          <li class="nav-item"><a class="nav-link" href="insertar_servicio.html">Insertar</a></li>
+          <li class="nav-item"><a class="nav-link" href="consultar_servicio.html">Consultar</a></li>
+          <li class="nav-item"><a class="nav-link" href="editar_servicio.html">Editar</a></li>
+          <li class="nav-item"><a class="nav-link active" href="borrar_servicio.html">Eliminar</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container pb-5">
+
+    <div class="card hero-card">
+      <div class="hero-header">
+        <h1>Eliminar Servicio</h1>
+        <p class="mb-0 mt-2">Gestiona tu catálogo con seguridad y evita borrar registros por error.</p>
+      </div>
+      <img src="../imagenes/eliminar_audio.jpg" alt="Eliminar servicio de audio" class="hero-img">
+    </div>
+
+    <div class="row mt-4 g-4">
+      <div class="col-lg-7">
+        <div class="section-card">
+          <h4 class="subtitulo">🗑️ Eliminación de servicio</h4>
+
+          <div class="warning-box">
+            <strong>Atención:</strong> selecciona el servicio, revisa su información y confirma antes de eliminarlo.
+          </div>
+
+          <form id="buscar-form">
+            <label for="servicioSelect" class="form-label">Selecciona el servicio</label>
+            <select id="servicioSelect" class="form-select mb-3" required>
+              <option value="">Cargando servicios...</option>
+            </select>
+
+            <button type="submit" class="btn btn-outline-primary btn-custom">Ver servicio</button>
+            <a href="index.html" class="btn btn-secondary btn-custom ms-2">Volver</a>
+          </form>
+
+          <div id="servicio-info" class="preview-card d-none">
+            <h5 class="mb-3">Servicio seleccionado</h5>
+            <p class="mb-2"><strong>ID:</strong> <span id="info-id"></span></p>
+            <p class="mb-2"><strong>Nombre:</strong> <span id="info-nombre"></span></p>
+            <p class="mb-2"><strong>Precio:</strong> $<span id="info-precio"></span></p>
+            <p class="mb-0"><strong>Descripción:</strong> <span id="info-descripcion"></span></p>
+
+            <div class="mt-4">
+              <button id="btn-eliminar" class="btn btn-danger btn-custom" type="button">
+                Eliminar definitivamente
+              </button>
+            </div>
+          </div>
+
+          <div id="mensaje" class="alert mt-4 d-none"></div>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="section-card h-100 d-flex flex-column justify-content-center">
+          <img src="../imagenes/banner_audio.jpg" alt="Estudio Diego Arenas Audio" class="img-fluid rounded-4 shadow-sm mb-3">
+          <h5 class="text-center">Catálogo limpio y organizado</h5>
+          <p class="text-center text-muted mb-0">
+            Mantén actualizados solo los servicios vigentes del estudio para ofrecer una experiencia clara al cliente.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = '/api/servicios/api/servicios';
+
+    let servicioId = null;
+
+    const buscarForm = document.getElementById('buscar-form');
+    const servicioInfo = document.getElementById('servicio-info');
+    const mensaje = document.getElementById('mensaje');
+    const btnEliminar = document.getElementById('btn-eliminar');
+    const servicioSelect = document.getElementById('servicioSelect');
+
+    function mostrarMensaje(texto, tipo = 'success') {
+      mensaje.className = `alert alert-${tipo} mt-4`;
+      mensaje.textContent = texto;
+      mensaje.classList.remove('d-none');
+    }
+
+    function ocultarMensaje() {
+      mensaje.classList.add('d-none');
+      mensaje.textContent = '';
+    }
+
+    async function cargarServicios() {
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+
+        servicioSelect.innerHTML = '<option value="">Seleccione un servicio</option>';
+
+        if (!Array.isArray(data) || data.length === 0) {
+          servicioSelect.innerHTML = '<option value="">No hay servicios disponibles</option>';
+          return;
+        }
+
+        data.forEach(servicio => {
+          const option = document.createElement('option');
+          option.value = servicio.id;
+          option.textContent = `ID: ${servicio.id} | ${servicio.nombre} | $${servicio.precio}`;
+          servicioSelect.appendChild(option);
+        });
+      } catch (error) {
+        servicioSelect.innerHTML = '<option value="">Error cargando servicios</option>';
+        mostrarMensaje('No se pudieron cargar los servicios.', 'danger');
+      }
+    }
+
+    buscarForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      ocultarMensaje();
+
+      const id = servicioSelect.value;
+
+      if (!id) {
+        mostrarMensaje('Debes seleccionar un servicio.', 'warning');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/${id}`);
+        const data = await res.json();
+
+        if (!res.ok || data.error) {
+          throw new Error(data.error || 'Servicio no encontrado');
+        }
+
+        servicioId = data.id;
+
+        document.getElementById('info-id').textContent = data.id;
+        document.getElementById('info-nombre').textContent = data.nombre;
+        document.getElementById('info-precio').textContent = data.precio;
+        document.getElementById('info-descripcion').textContent = data.descripcion;
+
+        servicioInfo.classList.remove('d-none');
+        mostrarMensaje('Revisa la información antes de confirmar la eliminación.', 'info');
+
+      } catch (error) {
+        servicioInfo.classList.add('d-none');
+        mostrarMensaje('No se encontró el servicio seleccionado.', 'danger');
+      }
+    });
+
+    btnEliminar.addEventListener('click', async () => {
+      ocultarMensaje();
+
+      if (!servicioId) {
+        mostrarMensaje('Primero debes seleccionar y visualizar un servicio.', 'warning');
+        return;
+      }
+
+      const confirmar = confirm('¿Seguro que deseas eliminar este servicio? Esta acción no se puede deshacer.');
+
+      if (!confirmar) return;
+
+      try {
+        const res = await fetch(`${API_URL}/${servicioId}`, {
+          method: 'DELETE'
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || data.error) {
+          throw new Error(data.error || 'Error al eliminar');
+        }
+
+        servicioInfo.classList.add('d-none');
+        servicioSelect.value = '';
+        servicioId = null;
+
+        mostrarMensaje('Servicio eliminado correctamente.', 'success');
+        cargarServicios();
+
+      } catch (error) {
+        mostrarMensaje('Ocurrió un error al eliminar el servicio.', 'danger');
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', cargarServicios);
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

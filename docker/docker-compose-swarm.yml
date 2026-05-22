@@ -1,0 +1,181 @@
+services:
+
+  frontend:
+    image: aglsystems/frontaudio:1.0
+    ports:
+      - "8080:80"
+    networks:
+      - audio_net
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == servidorUbuntu2
+      restart_policy:
+        condition: on-failure
+
+  haproxy:
+    image: aglsystems/haproxy-audio:1.3
+    ports:
+      - "80:80"
+      - "8404:8404"
+    networks:
+      - audio_net
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == servidorUbuntu2
+      restart_policy:
+        condition: on-failure
+
+  clientes:
+    image: aglsystems/clientes-ms:2.5
+    ports:
+      - "3001:3001"
+    networks:
+      - audio_net
+    deploy:
+      replicas: 2
+      placement:
+        constraints:
+          - node.hostname == servidorUbuntu1
+      restart_policy:
+        condition: on-failure
+
+  servicios:
+    image: aglsystems/servicios-ms:2.5
+    ports:
+      - "3000:3000"
+    networks:
+      - audio_net
+    deploy:
+      replicas: 2
+      placement:
+        constraints:
+          - node.hostname == servidorUbuntu1
+      restart_policy:
+        condition: on-failure
+
+  pedidos:
+    image: aglsystems/pedidos-ms:2.6
+    ports:
+      - "3002:3002"
+    networks:
+      - audio_net
+    deploy:
+      replicas: 2
+      placement:
+        constraints:
+          - node.hostname == servidorUbuntu1
+      restart_policy:
+        condition: on-failure
+
+  pagos:
+    image: aglsystems/pagos-ms:2.6
+    ports:
+      - "3003:3003"
+    networks:
+      - audio_net
+    deploy:
+      replicas: 2
+      placement:
+        constraints:
+          - node.hostname == servidorUbuntu1
+      restart_policy:
+        condition: on-failure
+
+  db_clientes:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: Audio2026@
+      MYSQL_DATABASE: diegoAudio_clientes_db
+      MYSQL_USER: clientes_user
+      MYSQL_PASSWORD: Audio2026@
+    volumes:
+      - db_clientes_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - audio_net
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == servidorUbuntu1
+      restart_policy:
+        condition: on-failure
+
+  db_servicios:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: Audio2026@
+      MYSQL_DATABASE: diegoAudio_db
+      MYSQL_USER: servicios_user
+      MYSQL_PASSWORD: Audio2026@
+    volumes:
+      - db_servicios_data:/var/lib/mysql
+    ports:
+      - "3308:3306"
+    networks:
+      - audio_net
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == servidorUbuntu1
+      restart_policy:
+        condition: on-failure
+
+  db_pedidos:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: Audio2026@
+      MYSQL_DATABASE: diegoAudio_pedidos_db
+      MYSQL_USER: pedidos_user
+      MYSQL_PASSWORD: Audio2026@
+    volumes:
+      - db_pedidos_data:/var/lib/mysql
+    ports:
+      - "3309:3306"
+    networks:
+      - audio_net
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == servidorUbuntu1
+      restart_policy:
+        condition: on-failure
+
+  db_pagos:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: Audio2026@
+      MYSQL_DATABASE: diegoAudio_pagos_db
+      MYSQL_USER: pagos_user
+      MYSQL_PASSWORD: Audio2026@
+    volumes:
+      - db_pagos_data:/var/lib/mysql
+    ports:
+      - "3310:3306"
+    networks:
+      - audio_net
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == servidorUbuntu1
+      restart_policy:
+        condition: on-failure
+
+networks:
+  audio_net:
+    driver: overlay
+    attachable: true
+
+volumes:
+  db_clientes_data:
+  db_servicios_data:
+  db_pedidos_data:
+  db_pagos_data:

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Crear Pedido</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+
+body{
+font-family:'Poppins',sans-serif;
+background:linear-gradient(135deg,#eef2ff,#f8fafc);
+}
+
+.navbar-brand{
+font-weight:700;
+font-size:1.7rem;
+}
+
+/* ===== BANNER ===== */
+
+.banner-sistema{
+background:url('../imagenes/banner_audio.jpg') center/cover no-repeat;
+height:220px;
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+text-shadow:2px 2px 6px rgba(0,0,0,0.7);
+font-size:2rem;
+font-weight:700;
+}
+
+/* ===== HERO ===== */
+
+.hero-card,
+.content-card{
+border:none;
+border-radius:20px;
+box-shadow:0 12px 28px rgba(0,0,0,0.1);
+}
+
+.hero-card{
+overflow:hidden;
+margin-top:28px;
+}
+
+.hero-img{
+width:100%;
+height:250px;
+object-fit:cover;
+}
+
+/* ===== SERVICIOS ===== */
+
+.servicio-item{
+border:1px solid #e5e7eb;
+border-radius:14px;
+padding:14px;
+margin-bottom:12px;
+background:#fff;
+}
+
+.total-box{
+background:#ecfeff;
+border:1px solid #a5f3fc;
+border-radius:16px;
+padding:18px;
+font-size:1.1rem;
+}
+
+.form-select,
+.form-control{
+border-radius:12px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+
+<div class="container-fluid">
+
+<a class="navbar-brand" href="index.html">🎵 Diego Arenas Audio</a>
+
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCrearPedido">
+<span class="navbar-toggler-icon"></span>
+</button>
+
+<div class="collapse navbar-collapse" id="navbarCrearPedido">
+
+<ul class="navbar-nav me-auto">
+
+<li class="nav-item">
+<a class="nav-link" href="index.html">Inicio</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="ver_pedidos.html">Ver Pedidos</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link active" href="insertar_pedido.html">Crear Pedido</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="consultar_pedido.html">Consultar</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="editar_pedido.html">Editar</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="borrar_pedido.html">Eliminar</a>
+</li>
+
+</ul>
+
+</div>
+</div>
+</nav>
+
+
+<!-- BANNER DEL SISTEMA -->
+
+<div class="banner-sistema">
+Sistema de Gestión de Pedidos - Estudio de Audio
+</div>
+
+
+<div class="container pb-5">
+
+<!-- HERO -->
+
+<div class="hero-card">
+
+<img src="../imagenes/crear_pedido.jpg" alt="Crear pedido" class="hero-img">
+
+<div class="p-4 text-center bg-white">
+
+<h2>Crear Pedido</h2>
+
+<p class="text-muted mb-0">
+Selecciona un cliente y los servicios que desea contratar.
+</p>
+
+</div>
+</div>
+
+
+<!-- FORMULARIO -->
+
+<div class="content-card bg-white mt-4 p-4">
+
+<form id="pedido-form">
+
+<div class="mb-4">
+
+<label class="form-label">Cliente</label>
+
+<select id="id_cliente" class="form-select" required>
+
+<option value="">Cargando clientes...</option>
+
+</select>
+
+</div>
+
+
+<div class="mb-4">
+
+<label class="form-label">Servicios disponibles</label>
+
+<div id="lista-servicios"></div>
+
+</div>
+
+
+<div class="total-box mb-4">
+
+<strong>Total estimado del pedido:</strong>
+
+<span id="total-pedido">$0</span>
+
+</div>
+
+
+<button type="submit" class="btn btn-success">
+
+Guardar pedido
+
+</button>
+
+<a href="index.html" class="btn btn-secondary ms-2">
+
+Volver
+
+</a>
+
+</form>
+
+
+<div id="mensaje" class="alert mt-4 d-none"></div>
+
+</div>
+
+</div>
+
+
+<script>
+
+let serviciosDisponibles = [];
+
+/* ===== CALCULAR TOTAL ===== */
+
+function actualizarTotal(){
+
+const checks=document.querySelectorAll('.check-servicio:checked')
+
+let total=0
+
+checks.forEach(check=>{
+const precio=parseFloat(check.dataset.precio)
+total+=precio
+})
+
+document.getElementById('total-pedido').textContent=`$${total.toFixed(2)}`
+
+}
+
+
+/* ===== CARGAR CLIENTES ===== */
+
+fetch('/api/clientes/api/clientes')
+
+.then(res=>res.json())
+
+.then(data=>{
+
+const select=document.getElementById('id_cliente')
+
+select.innerHTML='<option value="">Seleccione un cliente...</option>'
+
+data.forEach(cliente=>{
+
+select.innerHTML+=`
+<option value="${cliente.id}">
+${cliente.id} - ${cliente.nombre} - ${cliente.numero_documento}
+</option>
+`
+
+})
+
+})
+
+
+/* ===== CARGAR SERVICIOS ===== */
+
+fetch('/api/servicios/api/servicios')
+
+.then(res=>res.json())
+
+.then(data=>{
+
+serviciosDisponibles=data
+
+const contenedor=document.getElementById('lista-servicios')
+
+contenedor.innerHTML=''
+
+data.forEach(servicio=>{
+
+const div=document.createElement('div')
+
+div.className='servicio-item'
+
+div.innerHTML=`
+
+<div class="form-check">
+
+<input class="form-check-input check-servicio"
+type="checkbox"
+value="${servicio.id}"
+data-precio="${servicio.precio}"
+id="servicio_${servicio.id}">
+
+<label class="form-check-label" for="servicio_${servicio.id}">
+
+<strong>${servicio.nombre}</strong> - $${servicio.precio}<br>
+
+<small class="text-muted">${servicio.descripcion}</small>
+
+</label>
+
+</div>
+
+`
+
+contenedor.appendChild(div)
+
+})
+
+document.querySelectorAll('.check-servicio').forEach(check=>{
+
+check.addEventListener('change',actualizarTotal)
+
+})
+
+})
+
+
+/* ===== GUARDAR PEDIDO ===== */
+
+document.getElementById('pedido-form').addEventListener('submit',function(e){
+
+e.preventDefault()
+
+const id_cliente=document.getElementById('id_cliente').value
+
+const servicios=Array.from(
+document.querySelectorAll('.check-servicio:checked')
+).map(check=>Number(check.value))
+
+
+if(!id_cliente||servicios.length===0){
+
+const mensaje=document.getElementById('mensaje')
+
+mensaje.className='alert alert-warning mt-4'
+
+mensaje.textContent='Debes seleccionar un cliente y al menos un servicio.'
+
+mensaje.classList.remove('d-none')
+
+return
+
+}
+
+
+fetch('/api/pedidos/api/pedidos',{
+
+method:'POST',
+
+headers:{'Content-Type':'application/json'},
+
+body:JSON.stringify({
+
+id_cliente:Number(id_cliente),
+
+servicios
+
+})
+
+})
+
+.then(res=>res.json())
+
+.then(data=>{
+
+if(data.error)throw new Error(data.error)
+
+const mensaje=document.getElementById('mensaje')
+
+mensaje.className='alert alert-success mt-4'
+
+mensaje.textContent=`Pedido creado con éxito. ID generado: ${data.id}`
+
+mensaje.classList.remove('d-none')
+
+document.getElementById('pedido-form').reset()
+
+document.getElementById('total-pedido').textContent='$0'
+
+})
+
+.catch(error=>{
+
+const mensaje=document.getElementById('mensaje')
+
+mensaje.className='alert alert-danger mt-4'
+
+mensaje.textContent='Error al crear el pedido'
+
+mensaje.classList.remove('d-none')
+
+console.error(error)
+
+})
+
+})
+
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Diego Arenas Audio - Servicios</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+
+    body{
+      background: linear-gradient(135deg, #f4f6f9, #e9eef5);
+      min-height: 100vh;
+    }
+
+    .navbar-brand{
+      font-weight: 600;
+      font-size: 1.8rem;
+    }
+
+    .hero-card{
+      border: none;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+      margin-top: 30px;
+    }
+
+    .hero-img{
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+    }
+
+    .menu-card{
+      border: none;
+      border-radius: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      margin-top: 25px;
+    }
+
+    .btn-menu{
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+    }
+
+  </style>
+
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+
+<div class="container-fluid">
+
+<a class="navbar-brand" href="index.html">🎵 Diego Arenas Audio</a>
+
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavInicio">
+<span class="navbar-toggler-icon"></span>
+</button>
+
+<div class="collapse navbar-collapse" id="navbarNavInicio">
+
+<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+<li class="nav-item">
+<a class="nav-link" href="ver_servicios.html">Ver Servicios</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="insertar_servicio.html">Insertar</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="consultar_servicio.html">Consultar</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="editar_servicio.html">Editar</a>
+</li>
+
+<li class="nav-item">
+<a class="nav-link" href="borrar_servicio.html">Eliminar</a>
+</li>
+
+</ul>
+
+<!-- BOTÓN PAGINA PRINCIPAL -->
+
+<div class="d-flex">
+<a href="../index.html" class="btn btn-light fw-semibold">
+Página principal
+</a>
+</div>
+
+</div>
+</div>
+</nav>
+
+
+<div class="container pb-5">
+
+<div class="card hero-card">
+
+<img src="../imagenes/banner_audio.jpg" alt="Banner Diego Arenas Audio" class="hero-img">
+
+<div class="card-body text-center">
+
+<h2 class="mb-2">
+Bienvenido al catálogo de servicios
+</h2>
+
+<p class="text-muted mb-0">
+Plataforma de gestión de servicios del estudio profesional Diego Arenas Audio.
+</p>
+
+</div>
+</div>
+
+
+<div class="card menu-card">
+
+<div class="card-body">
+
+<h4 class="text-center mb-4">
+Opciones disponibles
+</h4>
+
+<div class="d-grid gap-3 col-md-8 mx-auto">
+
+<a href="ver_servicios.html" class="btn btn-outline-primary btn-menu">
+📋 Ver Servicios
+</a>
+
+<a href="insertar_servicio.html" class="btn btn-outline-success btn-menu">
+➕ Insertar Servicio
+</a>
+
+<a href="consultar_servicio.html" class="btn btn-outline-info btn-menu">
+🔍 Consultar Servicio
+</a>
+
+<a href="editar_servicio.html" class="btn btn-outline-warning btn-menu">
+✏️ Editar Servicio
+</a>
+
+<a href="borrar_servicio.html" class="btn btn-outline-danger btn-menu">
+🗑️ Eliminar Servicio
+</a>
+
+</div>
+</div>
+
+<div class="card-footer text-center text-muted">
+
+<small>
+Aplicación desarrollada para el microservicio de servicios
+</small>
+
+</div>
+</div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

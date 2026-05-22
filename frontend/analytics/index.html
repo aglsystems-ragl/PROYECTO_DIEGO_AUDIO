@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Analytics - Diego Arenas Audio</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 20px; }
+    h1 { color: #1f2937; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 25px; }
+    .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+    .kpi { font-size: 32px; font-weight: bold; color: #2563eb; }
+    canvas { background: white; padding: 15px; border-radius: 12px; margin-bottom: 25px; }
+  </style>
+</head>
+<body>
+
+<h1>Dashboard Analytics - Diego Arenas Audio</h1>
+<p>Resultados generados mediante Apache Spark, RDD y MapReduce.</p>
+
+<div class="grid">
+  <div class="card">
+    <h3>Registros procesados</h3>
+    <div class="kpi" id="totalRegistros">0</div>
+  </div>
+  <div class="card">
+    <h3>Pagos rechazados</h3>
+    <div class="kpi" id="pagosRechazados">0</div>
+  </div>
+  <div class="card">
+    <h3>Servicio más solicitado</h3>
+    <div class="kpi" id="topServicio">-</div>
+  </div>
+</div>
+
+<h2>Ingresos por método de pago</h2>
+<canvas id="graficoMetodos"></canvas>
+
+<h2>Top servicios</h2>
+<canvas id="graficoServicios"></canvas>
+
+<h2>Top clientes</h2>
+<canvas id="graficoClientes"></canvas>
+
+<script>
+fetch('resultados_analytics.json')
+  .then(response => response.json())
+  .then(data => {
+    document.getElementById('totalRegistros').innerText = data.total_registros_procesados;
+    document.getElementById('pagosRechazados').innerText = data.pagos_rechazados;
+    document.getElementById('topServicio').innerText = data.top_servicios[0][0];
+
+    crearGrafico('graficoMetodos', 'Ingresos por método de pago',
+      data.ingresos_por_metodo.map(x => x[0]),
+      data.ingresos_por_metodo.map(x => x[1])
+    );
+
+    crearGrafico('graficoServicios', 'Servicios más solicitados',
+      data.top_servicios.map(x => x[0]),
+      data.top_servicios.map(x => x[1])
+    );
+
+    crearGrafico('graficoClientes', 'Clientes con mayor valor acumulado',
+      data.top_clientes.map(x => x[0]),
+      data.top_clientes.map(x => x[1])
+    );
+  });
+
+function crearGrafico(id, titulo, labels, valores) {
+  new Chart(document.getElementById(id), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: titulo,
+        data: valores
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: titulo }
+      }
+    }
+  });
+}
+</script>
+
+</body>
+</html>

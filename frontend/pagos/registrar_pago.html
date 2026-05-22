@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrar Pago</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body{font-family:'Poppins',sans-serif;background:linear-gradient(135deg,#eef2ff,#f8fafc);}
+    .navbar-brand{font-weight:700;font-size:1.7rem;}
+    .hero-card,.content-card{border:none;border-radius:20px;box-shadow:0 12px 28px rgba(0,0,0,0.1);}
+    .hero-card{overflow:hidden;margin-top:28px;}
+    .hero-img{width:100%;height:250px;object-fit:cover;}
+    .form-select,.form-control{border-radius:12px;}
+    .pedido-info{background:#f8fafc;border:1px solid #dbe3ef;border-radius:16px;padding:18px;}
+    .badge-servicio{background:#e0f2fe;color:#0369a1;border-radius:999px;padding:6px 10px;display:inline-block;margin:4px 6px 0 0;font-size:.9rem;}
+    .info-extra{background:#fff7ed;border:1px solid #fdba74;border-radius:12px;padding:12px;margin-top:12px;}
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="index.html">🎵 Diego Arenas Audio</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+        <li class="nav-item"><a class="nav-link active" href="registrar_pago.html">Registrar Pago</a></li>
+        <li class="nav-item"><a class="nav-link" href="ver_pagos.html">Ver Pagos</a></li>
+        <li class="nav-item"><a class="nav-link" href="consultar_pago.html">Consultar Pago</a></li>
+        <li class="nav-item"><a class="nav-link" href="borrar_pago.html">Eliminar Pago</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container pb-5">
+  <div class="hero-card">
+    <img src="../imagenes/registrar_pago.jpg" alt="Registrar pago" class="hero-img">
+    <div class="p-4 text-center bg-white">
+      <h2>Registrar Pago</h2>
+      <p class="text-muted mb-0">Selecciona un pedido, método de pago y estado para registrar el proceso.</p>
+    </div>
+  </div>
+
+  <div class="content-card bg-white mt-4 p-4">
+    <form id="formPago">
+      <div class="mb-4">
+        <label class="form-label">Pedido</label>
+        <select id="id_pedido" class="form-select" required>
+          <option value="">Cargando pedidos...</option>
+        </select>
+      </div>
+
+      <div id="detalle-pedido" class="pedido-info mb-4 d-none">
+        <h5 class="mb-3">Detalle del pedido</h5>
+        <p class="mb-1"><strong>Cliente:</strong> <span id="p_cliente"></span></p>
+        <p class="mb-1"><strong>Email:</strong> <span id="p_email"></span></p>
+        <p class="mb-1"><strong>Fecha del pedido:</strong> <span id="p_fecha"></span></p>
+        <p class="mb-1"><strong>Estado del pedido:</strong> <span id="p_estado"></span></p>
+        <p class="mb-1"><strong>Intentos de pago:</strong> <span id="p_intentos"></span></p>
+        <p class="mb-2"><strong>Último estado de pago:</strong> <span id="p_ultimo_estado"></span></p>
+        <p class="mb-2"><strong>Servicios:</strong></p>
+        <div id="p_servicios" class="mb-3"></div>
+        <p class="mb-0"><strong>Total del pedido:</strong> <span id="p_total"></span></p>
+        <div class="info-extra">
+          Si este pedido ya fue confirmado y deseas volver a comprar lo mismo, debes crear un nuevo pedido desde el módulo de pedidos.
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Método de pago</label>
+        <select id="metodo_pago" class="form-select" required>
+          <option value="">Seleccione...</option>
+          <option value="Nequi">Nequi</option>
+          <option value="Transferencia bancaria">Transferencia bancaria</option>
+          <option value="Tarjeta de credito">Tarjeta de credito</option>
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label">Estado del pago</label>
+        <select id="estado" class="form-select" required>
+          <option value="">Seleccione...</option>
+          <option value="pendiente">Pendiente</option>
+          <option value="pagado">Pagado</option>
+          <option value="rechazado">Rechazado</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-success">Registrar pago</button>
+      <a href="index.html" class="btn btn-secondary ms-2">Volver</a>
+    </form>
+
+    <div id="mensaje" class="alert mt-4 d-none"></div>
+    <div id="descarga" class="mt-3"></div>
+  </div>
+</div>
+
+<script>
+  let pedidosDisponibles = [];
+
+  function renderServicios(servicios) {
+    if (!Array.isArray(servicios)) return '';
+    return servicios.map(s => `<span class="badge-servicio">${s.nombre} - $${Number(s.precio).toLocaleString('es-CO')}</span>`).join('');
+  }
+
+  function pedidoPuedePagarse(pedido) {
+    const estado = String(pedido?.estado_pedido || '').trim().toLowerCase();
+    return estado !== 'confirmado' && estado !== 'cancelado';
+  }
+
+  fetch('/api/pedidos')
+    .then(res => res.json())
+    .then(data => {
+      pedidosDisponibles = Array.isArray(data) ? data : [];
+      const select = document.getElementById('id_pedido');
+      select.innerHTML = '<option value="">Seleccione un pedido...</option>';
+
+      pedidosDisponibles.forEach(pedido => {
+        if (pedidoPuedePagarse(pedido)) {
+          select.innerHTML += `<option value="${pedido.id}">
+            Pedido #${pedido.id} - ${pedido.nombre_cliente} - $${Number(pedido.precio_total).toLocaleString('es-CO')}
+          </option>`;
+        }
+      });
+
+      if (select.options.length === 1) {
+        select.innerHTML = '<option value="">No hay pedidos disponibles para pagar</option>';
+      }
+    });
+
+  document.getElementById('id_pedido').addEventListener('change', function() {
+    const id = Number(this.value);
+    const pedido = pedidosDisponibles.find(p => Number(p.id) === id);
+
+    if (!pedido) {
+      document.getElementById('detalle-pedido').classList.add('d-none');
+      return;
+    }
+
+    document.getElementById('detalle-pedido').classList.remove('d-none');
+    document.getElementById('p_cliente').textContent = pedido.nombre_cliente;
+    document.getElementById('p_email').textContent = pedido.email_cliente;
+    document.getElementById('p_fecha').textContent = pedido.fecha;
+    document.getElementById('p_estado').textContent = pedido.estado_pedido || 'En proceso';
+    document.getElementById('p_intentos').textContent = pedido.cantidad_intentos_pago || 0;
+    document.getElementById('p_ultimo_estado').textContent = pedido.ultimo_estado_pago || 'Sin intentos previos';
+    document.getElementById('p_servicios').innerHTML = renderServicios(pedido.servicios_seleccionados);
+    document.getElementById('p_total').textContent = `$${Number(pedido.precio_total).toLocaleString('es-CO')}`;
+  });
+
+  document.getElementById('formPago').addEventListener('submit', function(e){
+    e.preventDefault();
+
+    const id_pedido = Number(document.getElementById('id_pedido').value);
+    const metodo_pago = document.getElementById('metodo_pago').value;
+    const estado = document.getElementById('estado').value;
+    const pedido = pedidosDisponibles.find(p => Number(p.id) === id_pedido);
+
+    if (!pedido) {
+      const mensaje = document.getElementById('mensaje');
+      mensaje.className = 'alert alert-danger mt-4';
+      mensaje.textContent = 'Debes seleccionar un pedido válido';
+      mensaje.classList.remove('d-none');
+      return;
+    }
+
+    if (!pedidoPuedePagarse(pedido)) {
+      const mensaje = document.getElementById('mensaje');
+      mensaje.className = 'alert alert-warning mt-4';
+      mensaje.textContent = 'Este pedido ya no admite nuevos pagos. Si deseas comprar de nuevo, crea un nuevo pedido.';
+      mensaje.classList.remove('d-none');
+      return;
+    }
+
+    fetch('/api/pagos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id_pedido, metodo_pago, estado })
+    })
+    .then(res => res.json())
+    .then(data => {
+      const mensaje = document.getElementById('mensaje');
+      const descarga = document.getElementById('descarga');
+
+      if (data.error) throw new Error(data.error);
+
+      mensaje.className = estado === 'pagado' ? 'alert alert-success mt-4' : 'alert alert-warning mt-4';
+      mensaje.textContent = `Pago registrado correctamente. Estado: ${estado}. Referencia: ${data.referencia_pago}. Intento número: ${data.numero_intento}`;
+      mensaje.classList.remove('d-none');
+
+      descarga.innerHTML = `
+        <a class="btn btn-outline-primary mt-2" href="${data.comprobante}" target="_blank">
+          Descargar comprobante / factura PDF
+        </a>
+      `;
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1200);
+    })
+    .catch(error => {
+      const mensaje = document.getElementById('mensaje');
+      mensaje.className = 'alert alert-danger mt-4';
+      mensaje.textContent = error.message || 'Error al registrar el pago';
+      mensaje.classList.remove('d-none');
+      console.error(error);
+    });
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

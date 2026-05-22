@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Editar Servicio - Diego Arenas Audio</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body{
+      background: linear-gradient(135deg, #f4f6f9, #e9eef5);
+      min-height: 100vh;
+    }
+
+    .navbar-brand{
+      font-weight: 600;
+      font-size: 1.8rem;
+    }
+
+    .hero-card{
+      border: none;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+      margin-top: 35px;
+    }
+
+    .hero-header{
+      background: linear-gradient(90deg, #0d6efd, #3b82f6);
+      color: white;
+      text-align: center;
+      padding: 22px;
+    }
+
+    .hero-header h1{
+      margin: 0;
+      font-size: 2.2rem;
+      font-weight: 500;
+    }
+
+    .hero-img{
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+    }
+
+    .section-card{
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      padding: 30px;
+      margin-top: 25px;
+    }
+
+    .subtitulo{
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 18px;
+    }
+
+    .btn-custom{
+      min-width: 150px;
+      border-radius: 10px;
+    }
+
+    .form-control, .form-select{
+      border-radius: 10px;
+    }
+
+    .preview-card{
+      background: #f8fafc;
+      border: 1px solid #dbe3ef;
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .badge-soft{
+      background: #e7f1ff;
+      color: #0d6efd;
+      padding: 8px 12px;
+      border-radius: 30px;
+      font-size: 0.9rem;
+    }
+
+    .campo-info{
+      font-size: 0.95rem;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">🎵 Diego Arenas Audio</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavEditar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavEditar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="ver_servicios.html">Ver Servicios</a></li>
+          <li class="nav-item"><a class="nav-link" href="insertar_servicio.html">Insertar</a></li>
+          <li class="nav-item"><a class="nav-link" href="consultar_servicio.html">Consultar</a></li>
+          <li class="nav-item"><a class="nav-link active" href="editar_servicio.html">Editar</a></li>
+          <li class="nav-item"><a class="nav-link" href="borrar_servicio.html">Eliminar</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container pb-5">
+
+    <div class="card hero-card">
+      <div class="hero-header">
+        <h1>Editar Servicio</h1>
+        <p class="mb-0 mt-2">Actualiza la información del catálogo del estudio de forma rápida y profesional.</p>
+      </div>
+      <img src="../imagenes/editar_audio.jpg" alt="Editar servicio de audio" class="hero-img">
+    </div>
+
+    <div class="row mt-4 g-4">
+      <div class="col-lg-5">
+        <div class="section-card h-100">
+          <h4 class="subtitulo">🔎 Seleccionar servicio</h4>
+          <p class="campo-info">
+            Selecciona un servicio del menú para cargar sus datos actuales y luego editarlo.
+          </p>
+
+          <form id="buscar-form">
+            <label for="servicioSelect" class="form-label">Servicio</label>
+            <select id="servicioSelect" class="form-select mb-3" required>
+              <option value="">Cargando servicios...</option>
+            </select>
+
+            <button type="submit" class="btn btn-primary btn-custom">Cargar</button>
+            <a href="index.html" class="btn btn-secondary btn-custom ms-2">Volver</a>
+          </form>
+
+          <div id="datos-servicio" class="preview-card d-none">
+            <span class="badge-soft">Servicio encontrado</span>
+            <div class="mt-3">
+              <p class="mb-2"><strong>ID:</strong> <span id="preview-id"></span></p>
+              <p class="mb-2"><strong>Nombre actual:</strong> <span id="preview-nombre"></span></p>
+              <p class="mb-2"><strong>Precio actual:</strong> $<span id="preview-precio"></span></p>
+              <p class="mb-0"><strong>Descripción actual:</strong> <span id="preview-descripcion"></span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-7">
+        <div class="section-card h-100">
+          <h4 class="subtitulo">✏️ Formulario de edición</h4>
+          <p class="campo-info">
+            Modifica los campos necesarios y guarda los cambios.
+          </p>
+
+          <form id="editar-form" class="d-none">
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre del servicio</label>
+              <input type="text" id="nombre" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="precio" class="form-label">Precio</label>
+              <input type="number" id="precio" class="form-control" step="0.01" min="0" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="descripcion" class="form-label">Descripción</label>
+              <textarea id="descripcion" class="form-control" rows="5" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success btn-custom">Guardar cambios</button>
+            <button type="button" id="limpiar-btn" class="btn btn-outline-secondary btn-custom ms-2">Limpiar</button>
+          </form>
+
+          <div id="mensaje" class="alert mt-4 d-none"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = '/api/servicios/api/servicios';
+
+    let servicioId = null;
+
+    const mensaje = document.getElementById('mensaje');
+    const buscarForm = document.getElementById('buscar-form');
+    const editarForm = document.getElementById('editar-form');
+    const datosServicio = document.getElementById('datos-servicio');
+    const servicioSelect = document.getElementById('servicioSelect');
+
+    function mostrarMensaje(texto, tipo = 'success') {
+      mensaje.className = `alert alert-${tipo} mt-4`;
+      mensaje.textContent = texto;
+      mensaje.classList.remove('d-none');
+    }
+
+    function ocultarMensaje() {
+      mensaje.classList.add('d-none');
+      mensaje.textContent = '';
+    }
+
+    async function cargarServicios() {
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+
+        servicioSelect.innerHTML = '<option value="">Seleccione un servicio</option>';
+
+        if (!Array.isArray(data) || data.length === 0) {
+          servicioSelect.innerHTML = '<option value="">No hay servicios disponibles</option>';
+          return;
+        }
+
+        data.forEach(servicio => {
+          const option = document.createElement('option');
+          option.value = servicio.id;
+          option.textContent = `ID: ${servicio.id} | ${servicio.nombre} | $${servicio.precio}`;
+          servicioSelect.appendChild(option);
+        });
+      } catch (error) {
+        servicioSelect.innerHTML = '<option value="">Error cargando servicios</option>';
+        mostrarMensaje('No se pudieron cargar los servicios.', 'danger');
+      }
+    }
+
+    buscarForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      ocultarMensaje();
+
+      const id = servicioSelect.value;
+
+      if (!id) {
+        mostrarMensaje('Debes seleccionar un servicio.', 'warning');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/${id}`);
+        const data = await res.json();
+
+        if (!res.ok || data.error) {
+          throw new Error(data.error || 'Servicio no encontrado');
+        }
+
+        servicioId = data.id;
+
+        document.getElementById('nombre').value = data.nombre || '';
+        document.getElementById('precio').value = data.precio || '';
+        document.getElementById('descripcion').value = data.descripcion || '';
+
+        document.getElementById('preview-id').textContent = data.id;
+        document.getElementById('preview-nombre').textContent = data.nombre;
+        document.getElementById('preview-precio').textContent = data.precio;
+        document.getElementById('preview-descripcion').textContent = data.descripcion;
+
+        datosServicio.classList.remove('d-none');
+        editarForm.classList.remove('d-none');
+
+        mostrarMensaje('Servicio cargado correctamente. Ya puedes editarlo.', 'info');
+
+      } catch (error) {
+        datosServicio.classList.add('d-none');
+        editarForm.classList.add('d-none');
+        mostrarMensaje('No se encontró el servicio seleccionado.', 'danger');
+      }
+    });
+
+    editarForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      ocultarMensaje();
+
+      const nombre = document.getElementById('nombre').value.trim();
+      const precio = document.getElementById('precio').value.trim();
+      const descripcion = document.getElementById('descripcion').value.trim();
+
+      if (!servicioId) {
+        mostrarMensaje('Primero debes cargar un servicio.', 'warning');
+        return;
+      }
+
+      if (!nombre || !precio || !descripcion) {
+        mostrarMensaje('Todos los campos son obligatorios.', 'warning');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/${servicioId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre, precio, descripcion })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || data.error) {
+          throw new Error(data.error || 'Error al actualizar');
+        }
+
+        document.getElementById('preview-nombre').textContent = nombre;
+        document.getElementById('preview-precio').textContent = precio;
+        document.getElementById('preview-descripcion').textContent = descripcion;
+
+        mostrarMensaje('Servicio actualizado correctamente.', 'success');
+        cargarServicios();
+
+      } catch (error) {
+        mostrarMensaje('Ocurrió un error al actualizar el servicio.', 'danger');
+      }
+    });
+
+    document.getElementById('limpiar-btn').addEventListener('click', () => {
+      document.getElementById('nombre').value = '';
+      document.getElementById('precio').value = '';
+      document.getElementById('descripcion').value = '';
+      ocultarMensaje();
+    });
+
+    window.addEventListener('DOMContentLoaded', cargarServicios);
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

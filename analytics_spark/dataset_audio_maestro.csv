@@ -1,0 +1,14 @@
+pedido_id,cliente,email,servicios,total_pedido,estado_pedido,fecha_pedido,metodo_pago,estado_pago,valor_pago
+13,oscar mondragon,qwew@gmail.com,"Grabacion de voz, Mezcla de instrumental",120000.00,En proceso,2026-05-21T19:32:37.000Z,SIN_PAGO,SIN_PAGO,0
+12,DR. ZEIDA SOLARTE,zeida@uao.com,"Mastering, Produccion musical, nuevo servicio",211000.00,Confirmado,2026-04-10T22:07:20.000Z,Transferencia bancaria,pagado,211000.00
+11,Diego Arenas,diego@audio.com,"Mezcla de instrumental, Mezcla de voz, Mastering",240000.00,Confirmado,2026-04-10T22:01:59.000Z,Nequi,pagado,240000.00
+10,asdfg,3245@wqewq.com,"Grabacion de voz, Mezcla de instrumental, Mezcla de voz, Mastering, Produccion musical, nuevo servicio",411000.00,Confirmado,2026-04-10T04:50:32.000Z,SIN_PAGO,SIN_PAGO,0
+9,carlo labrador,aaaaaaa@hotmail.com,"Grabacion de voz, Mezcla de instrumental",120000.00,Confirmado,2026-04-10T00:12:31.000Z,Nequi,pagado,120000.00
+5,Diego Arenas,diego@audio.com,Produccion musical,120000.00,Confirmado,2026-03-16T19:02:20.000Z,Nequi,pagado,120000.00
+5,Diego Arenas,diego@audio.com,Produccion musical,120000.00,Confirmado,2026-03-16T19:02:20.000Z,Nequi,rechazado,120000.00
+4,Diego Arenas,diego@audio.com,Produccion musical,120000.00,Confirmado,2026-03-16T19:02:20.000Z,Nequi,pagado,120000.00
+3,Juan Gomez,juan@email.com,Produccion musical,120000.00,Confirmado,2026-03-16T19:02:20.000Z,Nequi,pagado,120000.00
+2,Laura Martinez,laura@email.com,"Mezcla de instrumental, Mastering",160000.00,En proceso,2026-03-16T19:02:20.000Z,SIN_PAGO,SIN_PAGO,0
+1,Diego Arenas,diego@audio.com,"Grabacion de voz, Mezcla de voz, Mastering",220000.00,Confirmado,2026-03-16T19:02:20.000Z,Nequi,pagado,220000.00
+1,Diego Arenas,diego@audio.com,"Grabacion de voz, Mezcla de voz, Mastering",220000.00,Confirmado,2026-03-16T19:02:20.000Z,Nequi,rechazado,220000.00
+1,Diego Arenas,diego@audio.com,"Grabacion de voz, Mezcla de voz, Mastering",220000.00,Confirmado,2026-03-16T19:02:20.000Z,Nequi,pagado,220000.00

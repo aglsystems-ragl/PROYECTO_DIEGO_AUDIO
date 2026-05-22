@@ -1,0 +1,94 @@
+{
+    "total_registros_procesados": 10000,
+    "ingresos_por_metodo": [
+        [
+            "Efectivo",
+            251468000.0
+        ],
+        [
+            "Nequi",
+            240546000.0
+        ],
+        [
+            "Transferencia bancaria",
+            248659000.0
+        ],
+        [
+            "Daviplata",
+            249430000.0
+        ],
+        [
+            "Tarjeta",
+            251170000.0
+        ]
+    ],
+    "top_servicios": [
+        [
+            "Mastering",
+            3377
+        ],
+        [
+            "Grabacion de voz",
+            3368
+        ],
+        [
+            "Produccion musical",
+            3339
+        ],
+        [
+            "nuevo servicio",
+            3326
+        ],
+        [
+            "Mezcla de instrumental",
+            3322
+        ],
+        [
+            "Mezcla de voz",
+            3301
+        ]
+    ],
+    "pagos_rechazados": 1500,
+    "top_clientes": [
+        [
+            "Andrés López",
+            100769000.0
+        ],
+        [
+            "Natalia Ramírez",
+            99667000.0
+        ],
+        [
+            "Carlos Méndez",
+            97124000.0
+        ],
+        [
+            "Sofía Herrera",
+            96402000.0
+        ],
+        [
+            "Oscar Mondragón",
+            95014000.0
+        ],
+        [
+            "Daniela Pérez",
+            94457000.0
+        ],
+        [
+            "Juan Gómez",
+            94346000.0
+        ],
+        [
+            "Laura Martínez",
+            93441000.0
+        ],
+        [
+            "Felipe Castro",
+            92769000.0
+        ],
+        [
+            "Valentina Rojas",
+            92491000.0
+        ]
+    ]
+}
