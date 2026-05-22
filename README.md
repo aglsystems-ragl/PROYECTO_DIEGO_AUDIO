@@ -1,4 +1,4 @@
-# 🎵 Diego Arenas Audio — Plataforma Distribuida de Gestión Musical
+# 🎵 Diego Arenas Audio — Plataforma Distribuida de Gestión Musical 🎵
 
 > Sistema de gestión integral para un estudio de producción musical, construido sobre una arquitectura de microservicios distribuidos con Docker Swarm, balanceo de carga con HAProxy y análisis Big Data con Apache Spark.
 
@@ -20,7 +20,7 @@ https://github.com/aglsystems-ragl/PROYECTO_DIEGO_AUDIO
 
 ---
 
-## 📋 Tabla de contenido
+##  Tabla de contenido
 
 - [Descripción general](#-descripción-general)
 - [Arquitectura del sistema](#-arquitectura-del-sistema)
@@ -38,7 +38,7 @@ https://github.com/aglsystems-ragl/PROYECTO_DIEGO_AUDIO
 
 ---
 
-## 📌 Descripción general
+##  Descripción general
 
 **Diego Arenas Audio** es una plataforma de gestión interna para un estudio de producción musical independiente. El sistema permite administrar clientes, catálogo de servicios, pedidos y pagos, todo desde una interfaz web unificada. Adicionalmente, incorpora un módulo de analítica distribuida que procesa grandes volúmenes de datos históricos y expone los resultados en un dashboard interactivo.
 
@@ -77,7 +77,7 @@ Implementar una arquitectura distribuida basada en microservicios, contenedores 
 
 ---
 
-## 🏗️ Arquitectura del sistema
+##  Arquitectura del sistema
 
 La arquitectura se despliega sobre dos máquinas virtuales Ubuntu configuradas como clúster Docker Swarm.
 
@@ -126,7 +126,7 @@ La arquitectura se despliega sobre dos máquinas virtuales Ubuntu configuradas c
 
 ---
 
-## 📁 Estructura del repositorio
+##  Estructura del repositorio
 
 ```
 PROYECTO_DIEGO_AUDIO/
@@ -174,7 +174,7 @@ PROYECTO_DIEGO_AUDIO/
 
 ---
 
-## 🛠️ Tecnologías utilizadas
+##  Tecnologías utilizadas
 
 | Categoría | Tecnología | Versión | Propósito |
 |-----------|------------|---------|-----------|
@@ -268,7 +268,7 @@ APIs / datos exportados
 
 ---
 
-## ✅ Requisitos previos
+##  Requisitos previos
 
 Antes de desplegar el sistema, asegúrate de contar con:
 
@@ -333,7 +333,7 @@ docker --version
 docker ps
 ```
 
-## ⚙️ Configuración de infraestructura
+##  Configuración de infraestructura
 
 ### Inicializar el clúster Docker Swarm
 
@@ -357,7 +357,7 @@ docker node ls
 
 ---
 
-## 🚀 Despliegue con Docker Swarm
+##  Despliegue con Docker Swarm
 
 Desde **servidorUbuntu1**, clona el repositorio y despliega el stack completo:
 
@@ -390,7 +390,7 @@ http://raglsystems.com.co:8404/haproxy?stats
 
 ---
 
-## 🔧 Microservicios
+##  Microservicios
 
 Cada microservicio corre de forma independiente con su propia lógica de negocio, base de datos y contenedor.
 
@@ -436,7 +436,7 @@ Función:  Registro de transacciones y generación de comprobantes PDF
 
 ---
 
-## 📊 Módulo de análisis distribuido (Spark)
+##  Módulo de análisis distribuido (Spark)
 
 El módulo de analítica distribuida está ubicado en `analytics_spark/` y se ejecuta directamente en **servidorUbuntu1**.
 
@@ -525,11 +525,11 @@ cat /var/www/analytics_audio/resultados_analytics.json
 
 ### Insights generados
 
-- 📈 Ingresos totales por método de pago (Efectivo, Tarjeta, Nequi, Daviplata, Transferencia)
-- 🎵 Top servicios más solicitados (Mezcla de voz, Mezcla instrumental, Mastering)
-- 👤 Top clientes por volumen económico acumulado
-- ❌ Cantidad total de pagos rechazados (mediante acumuladores)
-- 📦 Total de registros procesados de forma distribuida
+-  Ingresos totales por método de pago (Efectivo, Tarjeta, Nequi, Daviplata, Transferencia)
+-  Top servicios más solicitados (Mezcla de voz, Mezcla instrumental, Mastering)
+-  Top clientes por volumen económico acumulado
+-  Cantidad total de pagos rechazados (mediante acumuladores)
+-  Total de registros procesados de forma distribuida
 
 ### Dashboard Analytics
 
@@ -543,7 +543,7 @@ El dashboard carga `resultados_analytics.json` y genera gráficos dinámicos de 
 
 ---
 
-## 🔀 Enrutamiento HAProxy
+##  Enrutamiento HAProxy
 
 HAProxy actúa como punto de entrada único del sistema. Todas las peticiones entran por el puerto 80 y se distribuyen según la ruta.
 
@@ -612,7 +612,7 @@ Debe mostrar los backends en estado `UP`.
 
 ---
 
-## 🗄️ Bases de datos
+## Bases de datos
 
 Cada microservicio tiene su propia base de datos MySQL independiente, garantizando desacoplamiento total de datos.
 
@@ -627,7 +627,7 @@ Los datos persisten mediante **volúmenes Docker**, sobreviviendo reinicios de c
 
 ---
 
-## 📈 Escalabilidad y pruebas
+##  Escalabilidad y pruebas
 
 ### Escalar un microservicio en caliente
 
@@ -792,7 +792,7 @@ En general, el sistema cumple con los requerimientos del proyecto final: funcion
 ---
 
 
-## 👨‍💻 Autores
+## Autores
 
 Proyecto desarrollado para el curso de **Redes e Infraestructura** — Universidad Autónoma de Occidente (UAO), 2026.
 
