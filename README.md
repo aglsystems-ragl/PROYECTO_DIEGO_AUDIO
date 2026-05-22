@@ -13,7 +13,7 @@
 
 ## Repositorio
 
-```text
+```
 https://github.com/aglsystems-ragl/PROYECTO_DIEGO_AUDIO
 
 ```
