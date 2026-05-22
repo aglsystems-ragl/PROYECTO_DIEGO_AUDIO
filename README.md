@@ -15,6 +15,7 @@
 
 ```text
 https://github.com/aglsystems-ragl/PROYECTO_DIEGO_AUDIO
+
 ```
 
 ---
@@ -805,5 +806,4 @@ Proyecto desarrollado para el curso de **Redes e Infraestructura** — Universid
 
 > **Docente:** Oscar Mondragón  
 > **Universidad:** Universidad Autónoma de Occidente — Cali, Colombia  
-> **Docker Hub:** [hub.docker.com/u/aglsystems](https://hub.docker.com/u/aglsystems)
-https://github.com/aglsystems-ragl/PROYECTO_DIEGO_AUDIO
+> **Docker Hub:** https://github.com/aglsystems-ragl/PROYECTO_DIEGO_AUDIO
