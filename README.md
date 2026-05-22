@@ -9,9 +9,9 @@ El sistema implementa una plataforma para la gestión del estudio **Diego Arenas
 
 ## Integrantes
 
-- Valentina
+- Valentina Diaz lobaton
 - Rodrigo Andrés Gómez López
-- Diego Arenas
+- Diego Arenas Laso
 
 ---
 
